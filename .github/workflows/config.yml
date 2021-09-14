@@ -9,6 +9,8 @@ jobs:
   configure_host:
     runs-on: ubuntu-latest
     name: Install packages
+    environment:
+      name: PACKER
     steps:
     - name: Print envs
       run: env
