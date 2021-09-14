@@ -1,0 +1,14 @@
+name: Configure machine
+
+on:
+  push:
+    branches:
+    - main
+jobs:
+
+  configure_host:
+    runs-on: ubuntu-latest
+    name: Install packages
+    steps:
+    - name: Print envs
+      run: env
