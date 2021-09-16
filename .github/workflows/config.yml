@@ -11,10 +11,11 @@ jobs:
     name: Install packages
     environment:
       name: PACKER
+      url: ${{ steps.step_name.outputs.url_output }}
     steps:
     - name: set envs
+      run: env
       env:
         TEST_SECRET: ${{ secrets.TEST_SECRET }}
-      run: env
     - name: print envs
       run: env
