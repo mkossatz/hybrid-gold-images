@@ -12,5 +12,8 @@ jobs:
     environment:
       name: PACKER
     steps:
-    - name: Print envs
+    - name: set envs
+      env:
+        TEST_SECRET: ${{ secrets.TEST_SECRET }}
+    - name: print envs
       run: env
