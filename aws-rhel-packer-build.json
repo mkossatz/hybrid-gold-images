@@ -1,0 +1,66 @@
+{
+    "variables": {
+        "AWS_ACCESS_KEY": "{{env `AWS_ACCESS_KEY`}}",
+        "AWS_SECRET_KEY": "{{env `AWS_SECRET_KEY`}}",
+        "aws_region": "eu-west-2",
+        "aws_source_ami": "ami-0ad8ecac8af5fc52b",
+        "aws_instance_type": "t2.micro",
+        "AZURE_CLIENT_ID": "{{env `AZURE_CLIENT_ID`}}",
+        "AZURE_CLIENT_SECRET": "{{env `AZURE_CLIENT_SECRET`}}",
+        "AZURE_TENANT_ID": "{{env `AZURE_TENANT_ID`}}",
+        "azure_os_type": "Linux",
+        "azure_image_publisher": "RedHat",
+        "azure_image_offer": "RHEL",
+        "azure_image_sku": "8_4",
+        "AZURE_SUBSCRIPTION_ID": "{{env `AZURE_SUBSCRIPTION_ID`}}",
+        "azure_location": "uksouth",
+        "azure_vm_size": "Standard_DS2_v2"
+    },
+    "sensitive-variables": [
+        "AWS_ACCESS_KEY",
+        "AWS_SECRET_KEY",
+        "AZURE_CLIENT_ID",
+        "AZURE_CLIENT_SECRET",
+        "AZURE_TENANT_ID",
+        "AZURE_SUBSCRIPTION_ID"
+    ],
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "access_key": "{{ user `AWS_ACCESS_KEY` }}",
+            "secret_key": "{{ user `AWS_SECRET_KEY` }}",
+            "region": "{{ user `aws_region` }}",
+            "ami_name": "rhel-SOE-{{timestamp}}",
+            "source_ami": "{{ user `aws_source_ami` }}",
+            "instance_type": "{{ user `aws_instance_type` }}",
+            "ssh_username": "ec2-user",
+            "communicator": "ssh",
+            "associate_public_ip_address": true
+        },
+        {
+            "type": "azure-arm",
+            "client_id": "{{ user `AZURE_CLIENT_ID` }}",
+            "client_secret": "{{ user `AZURE_CLIENT_SECRET` }}",
+            "tenant_id": "{{ user `AZURE_TENANT_ID` }}",
+            "subscription_id": "{{ user `AZURE_SUBSCRIPTION_ID` }}",
+            "managed_image_resource_group_name": "packer",
+            "managed_image_name": "rhel-SOE-{{timestamp}}",
+            "os_type": "{{ user `azure_os_type` }}",
+            "image_publisher": "{{ user `azure_image_publisher` }}",
+            "image_offer": "{{ user `azure_image_offer` }}",
+            "image_sku": "{{ user `azure_image_sku` }}",
+            "azure_tags": {
+                "dept": "Engineering",
+                "task": "Image deployment"
+            },
+            "location": "{{ user `azure_location` }}",
+            "vm_size": "{{ user `azure_vm_size` }}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "ansible",
+            "playbook_file": "./rhel-configuration-ansible-playbook.yml"
+        }
+    ]
+}

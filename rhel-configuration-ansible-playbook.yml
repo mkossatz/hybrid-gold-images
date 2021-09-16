@@ -1,0 +1,95 @@
+---
+- hosts: all
+  gather_facts: false
+  become: yes
+  tasks:
+  
+    - name: Install subscription manager
+      yum:
+       name: subscription-manager
+       state: present
+       update_cache: true
+       
+    - name: Unregister cloud machines
+      community.general.redhat_subscription:
+       state: absent
+       
+
+    - name: Register with activationkey and consume subscriptions
+      community.general.redhat_subscription:
+        state: present
+        activationkey: packer-rhel
+        org_id: 13679583
+       # auto_attach: true
+
+    - name: Add group "rheladmins" to remote server
+      group:
+        name: rheladmins
+        gid: 2010
+        state: present
+
+    - name: Add group "dev" to remote server
+      group:
+        name: dev
+        gid: 2011
+        state: present
+
+    - name: Add group "test" to remote server
+      group:
+        name: test
+        gid: 2012
+        state: present 
+
+    - name: Add user "sysadmin" to remote server
+      user:
+        name: sysadmin
+        comment: "Privileged User"
+        uid: 2001
+        group: rheladmins
+        groups: test,dev
+        append: yes
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+
+    - name: Add user "Owain" to remote server
+      user:
+        name: owain
+        comment: "Accountant UnPrivileged User"
+        uid: 2002
+        group: test
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+
+    - name: Add user "Max" to remote server
+      user:
+        name: max
+        comment: "Content creator UnPrivileged User"
+        uid: 2003
+        group: dev
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+        
+    - name: latest Apache version installed
+      yum:
+       name: 
+       - httpd
+       - firewalld
+       state: present
+       
+    - name: Apache enabled and running
+      service:
+       name: httpd
+       enabled: true
+       state: started
+       
+    - name: Firewall opened for port 80/tcp
+      firewalld:
+       port: 80/tcp
+       permanent: true
+       state: enabled

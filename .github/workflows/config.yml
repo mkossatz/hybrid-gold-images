@@ -13,9 +13,16 @@ jobs:
       name: PACKER
       url: ${{ steps.step_name.outputs.url_output }}
     steps:
-    - name: set envs
-      run: env
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Run shell script
+      run: bash configure_machine.sh -xe
+    - name: Run packer templates
+      run: bash run_packer.sh -xe
       env:
-        TEST_SECRET: ${{ secrets.TEST_SECRET }}
-    - name: print envs
-      run: env
+        AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
