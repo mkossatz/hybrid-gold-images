@@ -3,7 +3,7 @@
 This demo sets out to show how customers can leverage Ansible and Hashicorp Packer in a CI/CD pipeline to automate creation of the same image across multiple clouds. The current clouds displayed in this demo are: 
 * AWS
 * Google Cloud
-* Azure 
+* Azure  
 
 The products used in this demo are:
 * Ansible
